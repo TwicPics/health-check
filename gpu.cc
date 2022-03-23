@@ -6,7 +6,7 @@ extern "C"
 #define __HAS_NVML
 #endif
 
-#include "node_modules/node-addon-api/napi.h"
+#include <napi.h>
 
 using namespace Napi;
 
