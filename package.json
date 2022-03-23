@@ -1,0 +1,27 @@
+{
+    "dependencies": {
+        "node-addon-api": "4.3.0"
+    },
+    "description": "configurable worker-backed health check server with built-in prometheus metrics for cpu and gpu usage",
+    "devDependencies": {
+        "eslint": "8.11.0",
+        "eslint-config-creative-area": "0.11.1"
+    },
+    "engines": {
+        "node": ">=16"
+    },
+    "eslintConfig": {
+        "extends": "creative-area/es2021/script",
+        "env": {
+            "node": true
+        }
+    },
+    "license": "MIT",
+    "main": "index.js",
+    "name": "@twicpics/health-check",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/twicpics/health-check.git"
+    },
+    "version": "0.0.1"
+}
