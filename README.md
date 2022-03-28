@@ -1,4 +1,9 @@
+<img align="right" width="25%" src="https://raw.githubusercontent.com/twicpics/health-check/main/logo.png">
+
 # TwicPics Health Check
+
+[![NPM Version][npm-image]][npm-url]
+[![License][license-image]][license-url]
 
 __configurable worker-backed health check server with built-in prometheus metrics for CPU and GPU__
 
@@ -38,33 +43,41 @@ All routes return plain text results.
 
 Status codes are:
 - `200` when things went properly
+- `404` when a route doesn't exist
 - `503` when something went wrong
 
 `/ready` can issue a `503` when not ready as normal behaviour.
 
 Out of the box, `/metrics` provides four metrics:
 - `cpu_memory`: how much of the CPU memory is being used (as a ratio between `0` and `1`) 
-- `cpu_usage`: how much the CPU was used in the last two seconds (as a ratio between `0` and `1`)
+- `cpu_usage`: how much the CPU processing power is being used (as a ratio between `0` and `1`)
 - `gpu_memory`: how much of the GPU memory is being used (as a ratio between `0` and `1`)
-- `gpu_usage`: how much the GPU is being used (as a ratio between `0` and `1`)
+- `gpu_usage`: how much the GPU processing power is being used (as a ratio between `0` and `1`)
 
-`gpu_memory` and `gpu_usage` will only be properly set if the [Nvidia Management Library](https://developer.nvidia.com/nvidia-management-library-nvml) and its headers is present in the system and a compatible acceleration card is installed. In any other case, values for both will be set to `-1`.
+`gpu_memory` and `gpu_usage` will only be set if the [Nvidia Management Library](https://developer.nvidia.com/nvidia-management-library-nvml) and its headers is present in the system and a compatible acceleration card is installed.
+
+CPU metrics are for all cores combined. If the CPU features more than one core, details will be available like so:
+- `cpu_usage{cpu="<index>")`: how much this specific core processing power is being used (as a ratio between `0` and `1`)
+
+Indexes are continuous and cores are in the order the OS listed them.
 
 GPU metrics are for all compatible cards combined. If more than one card is recognized, details will be available like so:
-- `gpu<index>_memory`: how much of this specific GPU memory is being used (as a ratio between `0` and `1`)
-- `gpu<index>_usage`: how much this specific GPU is being used (as a ratio between `0` and `1`)
+- `gpu_memory{gpu="<index>"}`: how much of this specific GPU memory is being used (as a ratio between `0` and `1`)
+- `gpu_usage{gpu="<index>"}`: how much this specific GPU processing power is being used (as a ratio between `0` and `1`)
 
 Indexes are determined by the [Nvidia Management Library](https://developer.nvidia.com/nvidia-management-library-nvml) and may not be continuous.
 
-If you don't want or need GPU metrics, just set the `gpuMetrics` option to `false`.
-
 ## Handlers
 
-When a handler is provided, it is called when the health check server corresponding paths are requested.
+When a handler is a function. If provided, it is called:
+- when the corresponding route is requested (`health` and `ready`)
+- every 2 seconds when metrics are computed (`metrics`)
 
-Handlers can be asynchronous (`async` or returning a `Promise`).
+Handlers can be asynchronous.
 
-If an exception is thrown in a handler, the health check server will issue a `503` with the exception message as a body.
+If an exception is thrown in a handler, the health check server will issue a `503` with the exception message as a body:
+- always for the `health` and `ready` handlers
+- if an exception was raised more than `errorRatio` times when calling the `metrics` handler
 
 ### `health: () => void`
 
@@ -101,10 +114,10 @@ healthCheck( {
 will have `/metrics` output something akin to
 
 ```
-cpu_memory 0.21
-cpu_usage 0.33
-gpu_memory -1
-gpu_usage -1
+cpu_memory 0.217
+cpu_usage 0.338
+gpu_memory 0.02
+gpu_usage 0
 my_metric 78
 ```
 
@@ -114,16 +127,27 @@ If the server is ready, return `true`. If not, return `false`.
 
 If `false` is returned then `/ready` will issue a `503` with `NOT READY` as a body.
 
+Alternatively and if warranted, you can throw an exception with a sensible error message.
+
 ## Options
 
 | name | type | default | description |
 |-|-|-|-|
+| `errorRatio` | `number` | `0` | ratio between `0` and `1` of ticks where the `metrics` handler threw an exception needed for the `/metrics` route to issue a `503` with the message of the latest exception as its body |
 | `keepAlive` | `number` | `60_000` | keep alive timeout for the port of the health check server in milliseconds |
-| `gpuMetrics` | `boolean` | `true` | set to false so as not to compute nor output GPU metrics |
+| `gpu` | `boolean` | `true` | set to `false` so as not to compute nor output GPU metrics |
 | `health` | `function` | `undefined` | health handler |
 | `metrics` | `function` | `undefined` | metrics handler |
-| `metricsPrefix` | `string` | `undefined` | metrics prefix, for instance if `metricsPrefix` is `myapp`, the metrics `cpu_memory` will become `myapp_cpu_memory` |
+| `percentile` | `number` or `array<number>` or `string` | `75` | percentile between `1` and `100` of ticks used to compute metrics (highest-valued ticks are used first), when an array of more than one percentile is provided, metrics will be duplicated with a `p="<percentile>"` label, when a string is provided it must be a space-separated list of values akin to `"25 50 75"` |
 | `port` | `number` | `8080` | port number listened to by the health check server |
+| `precision` | `number` | `3` | maximum number of digits after the decimal point of metrics values |
+| `prefix` | `string` | `undefined` | metrics prefix, for instance if `prefix` is `myapp`, the metrics `cpu_memory` will become `myapp_cpu_memory` |
 | `ready` | `function` | `undefined` | ready handler |
-| `timeout` | `number` | `1_000` | time in milliseconds main thread handlers have to answer (no timeout is set to `0`) |
-| `version` | `string` | `"unknown"` | what's returned by the `/version` route of the health check server |
+| `ticks` | `Number` | `30` | number of ticks (periods of `2` seconds) used to compute and output metrics |
+| `timeout` | `number` | `1_000` | time in milliseconds main thread handlers have to answer (set to `0` for no timeout) |
+| `version` | `string` | `undefined` | what's returned by the `/version` route of the health check server, if falsy (`undefined`, `null`, etc), the `/version` route will issue a `404` |
+
+[license-image]: https://img.shields.io/npm/l/@twicpics/health-check.svg?style=flat-square
+[license-url]: https://raw.githubusercontent.com/twicpics/health-check/master/LICENSE
+[npm-image]: https://img.shields.io/npm/v/@twicpics/health-check.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@twicpics/health-check
