@@ -121,6 +121,8 @@ gpu_usage 0
 my_metric 78
 ```
 
+Custom metrics must be numbers.
+
 ### `ready: () => boolean`
 
 If the server is ready, return `true`. If not, return `false`.
