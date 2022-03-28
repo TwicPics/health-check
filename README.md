@@ -57,19 +57,19 @@ Out of the box, `/metrics` provides four metrics:
 `gpu_memory` and `gpu_usage` will only be set if the [Nvidia Management Library](https://developer.nvidia.com/nvidia-management-library-nvml) and its headers is present in the system and a compatible acceleration card is installed.
 
 CPU metrics are for all cores combined. If the CPU features more than one core, details will be available like so:
-- `cpu_usage{cpu="<index>")`: how much this specific core processing power is being used (as a ratio between `0` and `1`)
+- `cpu_usage{cpu="<index>"}`: how much processing power of this specific core is being used (as a ratio between `0` and `1`)
 
 Indexes are continuous and cores are in the order the OS listed them.
 
 GPU metrics are for all compatible cards combined. If more than one card is recognized, details will be available like so:
-- `gpu_memory{gpu="<index>"}`: how much of this specific GPU memory is being used (as a ratio between `0` and `1`)
-- `gpu_usage{gpu="<index>"}`: how much this specific GPU processing power is being used (as a ratio between `0` and `1`)
+- `gpu_memory{gpu="<index>"}`: how much memory of this specific GPU is being used (as a ratio between `0` and `1`)
+- `gpu_usage{gpu="<index>"}`: how much processing power of this specific GPU is being used (as a ratio between `0` and `1`)
 
 Indexes are determined by the [Nvidia Management Library](https://developer.nvidia.com/nvidia-management-library-nvml) and may not be continuous.
 
 ## Handlers
 
-When a handler is a function. If provided, it is called:
+A handler is a function. If provided, it is called:
 - when the corresponding route is requested (`health` and `ready`)
 - every 2 seconds when metrics are computed (`metrics`)
 
@@ -77,7 +77,7 @@ Handlers can be asynchronous.
 
 If an exception is thrown in a handler, the health check server will issue a `503` with the exception message as a body:
 - always for the `health` and `ready` handlers
-- if an exception was raised more than `errorRatio` times when calling the `metrics` handler
+- if an exception was raised in `metrics` more than `errorRatio` times the number of ticks since `/metrics` was previously requested
 
 ### `health: () => void`
 
