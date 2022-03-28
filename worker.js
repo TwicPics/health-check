@@ -58,7 +58,9 @@ const parent = com(
                         handled.metrics && callParentFactory(
                             `metrics`,
                             undefined,
-                            timeoutPromiseFactory( Math.min( timeout, METRICS_TIMEOUT ) )
+                            timeoutPromiseFactory(
+                                ( timeout > 0 ) ? Math.min( timeout, METRICS_TIMEOUT ) : METRICS_TIMEOUT
+                            )
                         ),
                         {
                             gpu,
