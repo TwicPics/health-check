@@ -1,4 +1,4 @@
-<img align="right" width="25%" src="https://raw.githubusercontent.com/twicpics/health-check/main/logo.png">
+<img align="right" width="25%" src="https://raw.githubusercontent.com/twicpics/health-check/master/logo.png">
 
 # TwicPics Health Check
 
