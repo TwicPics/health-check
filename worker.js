@@ -3,16 +3,8 @@
 const com = require( `./lib/com` );
 const getMetricsFactory = require( `./lib/getMetricsFactory` );
 const { parentPort } = require( `worker_threads` );
+const parseOptions = require( `./lib/parseOptions` );
 const { timeoutPromiseFactory } = require( `./lib/utils` );
-
-const DEFAULT_ERROR_RATIO = 0;
-const DEFAULT_GPU = true;
-const DEFAULT_KEEP_ALIVE = 60_000;
-const DEFAULT_PERCENTILE = 75;
-const DEFAULT_PORT = 8080;
-const DEFAULT_PRECISION = 3;
-const DEFAULT_TICKS = 30;
-const DEFAULT_TIMEOUT = 1_000;
 
 const METRICS_FREQUENCY = 2_000;
 const METRICS_TIMEOUT = 1_000;
@@ -26,21 +18,9 @@ const parent = com(
     parentPort,
     {
         "start": options => {
-            // eslint-disable-next-line object-curly-newline
-            const {
-                gpu = DEFAULT_GPU,
-                errorRatio = DEFAULT_ERROR_RATIO,
-                handled = {},
-                keepAlive = DEFAULT_KEEP_ALIVE,
-                percentile = DEFAULT_PERCENTILE,
-                port = DEFAULT_PORT,
-                precision = DEFAULT_PRECISION,
-                prefix,
-                ticks = DEFAULT_TICKS,
-                timeout = DEFAULT_TIMEOUT,
-                version,
-            // eslint-disable-next-line object-curly-newline
-            } = options || {};
+            const
+                { gpu, errorRatio, handled, keepAlive, percentile, port, precision, prefix, ticks, timeout, version } =
+                    parseOptions( options );
 
             const callParentFactory =
                 ( name, forcedResponse, timeoutPromise ) =>
@@ -85,7 +65,7 @@ const parent = com(
                 ],
             ] );
 
-            if ( version ) {
+            if ( version !== undefined ) {
                 handlers.set( `version`, () => `${ version }` );
             }
 
