@@ -4,7 +4,8 @@ const com = require( `./lib/com` );
 const { Worker } = require( `worker_threads` );
 
 module.exports = (
-    { gpu, errorRatio, keepAlive, percentile, port, precision, prefix, timeout, ticks, version, ...handlers } = {}
+    { gpu, errorRatio, keepAlive, percentile, period, port, precision, prefix, timeout, ticks, version, ...handlers } =
+    {}
 ) => {
     com( new Worker( `${ __dirname }/worker.js` ), handlers ).start( {
         gpu,
@@ -14,6 +15,7 @@ module.exports = (
         ) ),
         keepAlive,
         percentile,
+        period,
         port,
         precision,
         prefix,

@@ -136,17 +136,18 @@ Alternatively and if warranted, you can throw an exception with a sensible error
 | name | type | default | description |
 |-|-|-|-|
 | `errorRatio` | `number` | `0` | ratio between `0` and `1` of ticks where the `metrics` handler threw an exception needed for the `/metrics` route to issue a `503` with the message of the latest exception as its body |
-| `keepAlive` | `number` | `60_000` | keep alive timeout for the port of the health check server in milliseconds |
+| `keepAlive` | `number` | `60` | keep alive timeout for the port of the health check server in seconds |
 | `gpu` | `boolean` | `true` | set to `false` so as not to compute nor output GPU metrics |
 | `health` | `function` | `undefined` | health handler |
 | `metrics` | `function` | `undefined` | metrics handler |
 | `percentile` | `number` or `array<number>` or `string` | `75` | percentile between `1` and `100` of ticks used to compute metrics (highest-valued ticks are used first), when an array of more than one percentile is provided, metrics will be duplicated with a `p="<percentile>"` label, when a string is provided it must be a space-separated list of values akin to `"25 50 75"` |
+| `period` | `number` | `2` | period of a tick in seconds (minimum `0.5`), metrics handler has half that time to respond unless `timeout` is lower and not `0` |
 | `port` | `number` | `8080` | port number listened to by the health check server |
 | `precision` | `number` | `3` | maximum number of digits after the decimal point of metrics values |
 | `prefix` | `string` | `undefined` | metrics prefix, for instance if `prefix` is `myapp`, the metrics `cpu_memory` will become `myapp_cpu_memory` |
 | `ready` | `function` | `undefined` | ready handler |
-| `ticks` | `Number` | `30` | number of ticks (periods of `2` seconds) used to compute and output metrics |
-| `timeout` | `number` | `1_000` | time in milliseconds main thread handlers have to answer (set to `0` for no timeout) |
+| `ticks` | `Number` | `30` | number of ticks (periods of `2` seconds by default) used to compute and output metrics |
+| `timeout` | `number` | `1` | time in seconds main thread handlers have to answer (set to `0` for no timeout) |
 | `version` | `string` | `undefined` | what's returned by the `/version` route of the health check server, if falsy (`undefined`, `null`, etc), the `/version` route will issue a `404` |
 
 [license-image]: https://img.shields.io/npm/l/@twicpics/health-check.svg?style=flat-square
