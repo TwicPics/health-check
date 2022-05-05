@@ -1,10 +1,10 @@
 {
     "dependencies": {
-        "node-addon-api": "4.3.0"
+        "node-addon-api": "5.0.0"
     },
     "description": "configurable worker-backed health check server with built-in prometheus metrics for cpu and gpu usage",
     "devDependencies": {
-        "eslint": "8.11.0",
+        "eslint": "8.14.0",
         "eslint-config-creative-area": "0.11.1"
     },
     "engines": {
