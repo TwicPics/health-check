@@ -14,7 +14,7 @@
       ],
       'libraries': [
         # References LVML
-        '<!@(ldconfig -p | grep "libnvidia-ml.so " | sed -n -e \'s/^.* => \\(.*\\)$/\\1/p\')',
+        '<!@(ldconfig -p | grep "libnvidia-ml.so " | sed -n -e "s/^.* => \\(.*\\)$/\\1/p" | head -n 1)',
         # Boosts internal calls
         '-Wl,-Bsymbolic-functions',
       ],
