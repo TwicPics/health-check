@@ -26,7 +26,7 @@ const throwsStuff = () => {
     throw new Error( `OH MY GOD!` );
 };
 
-require( `..` )( {
+require( `..` ).createServer( {
     "metrics": randomStuff,
     "percentile": 50,
     "prefix": `test`,

@@ -5,7 +5,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![License][license-image]][license-url]
 
-__configurable worker-backed health check server with built-in prometheus metrics for CPU and GPU__
+__configurable health check server with built-in prometheus metrics for CPU and GPU__
 
 ## Install
 
@@ -24,7 +24,7 @@ depending on the package manager you fancy the most.
 ```js
 const healthCheck = require( `@twicpics/health-check` );
 
-healthCheck( handlersAndOptions );
+healthCheck.createServer( options );
 ```
 
 ## Routes
@@ -69,15 +69,11 @@ Indexes are determined by the [Nvidia Management Library](https://developer.nvid
 
 ## Handlers
 
-A handler is a function. If provided, it is called:
+A handler is special kind of option that is a function. If provided, it is called:
 - when the corresponding route is requested (`health` and `ready`)
 - every _period_ seconds when metrics are computed internally (`metrics`)
 
-Handlers can be asynchronous.
-
-If an exception is thrown in a `health` or `ready` handler, the health check server will issue a `503` with the exception message.
-
-If an exception is raised in the `metrics` handler, it is silenced.
+Handlers _can_ be _asynchronous_.
 
 ### `health: () => void`
 
@@ -86,7 +82,7 @@ The health handler just has to complete execution. To notify the server is unhea
 Example:
 
 ```js
-healthCheck( {
+healthCheck.createServer( {
     "health": () => {
         if ( somethingWrong() ) {
             throw new Error( `something is wrong` );
@@ -97,14 +93,14 @@ healthCheck( {
 
 ### `metrics: () => object`
 
-This handler should return an `object` containing custom metrics that will be added to the built-in ones.
+This handler should return an `object` containing custom metrics.
 
-Property names will be converted from camel-case to snake-case if needed.
+Property names will be converted from camel-case to snake-case when needed.
 
 Example:
 
 ```js
-healthCheck( {
+healthCheck.createServer( {
     "metrics": () => ( {
         "myMetric": 78,
     } ),
@@ -121,15 +117,28 @@ gpu_usage 0
 my_metric 78
 ```
 
-Custom metrics must be numbers.
+Custom metrics must be pure numbers: strings convertible to numbers will be ignored.
+
+If an exception is raised in the `metrics` handler, it is silenced and ignored.
 
 ### `ready: () => boolean`
 
 If the server is ready, return `true`. If not, return `false`.
 
+Example:
+
+```js
+const somethingSlowToStart = new SomethingSlowToStart();
+
+healthCheck.createServer( {
+    "ready": () => somethingSlowToStart.isReady(),
+} );
+```
+
+
 If `false` is returned then `/ready` will issue a `503` with `NOT READY` as a body.
 
-Alternatively and if warranted, you can throw an exception with a sensible error message.
+If an exception is thrown then `/ready` will issue a `503` with the exception message as a body,
 
 ## Options
 
