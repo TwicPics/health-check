@@ -65,11 +65,10 @@ class Metrics
         {
             std::ostringstream output;
             output.precision( precision );
-            output << std::fixed;
             std::for_each(
                 m_map.begin(),
                 m_map.end(),
-                [ &output, &percentiles, &prefix ]( auto pair )
+                [ &output, &percentiles, precision, &prefix ]( auto pair )
                 {
                     auto results = pair.second.get_sorted();
                     if ( results.size() )
@@ -77,7 +76,7 @@ class Metrics
                         std::for_each(
                             percentiles.begin(),
                             percentiles.end(),
-                            [ &output, &pair, &percentiles, &prefix, &results ]( double percentile )
+                            [ &output, &pair, &percentiles, precision, &prefix, &results ]( double percentile )
                             {
                                 output
                                     << prefix
@@ -87,7 +86,10 @@ class Metrics
                                             pair.first
                                     )
                                     << ' '
-                                    << results[ m_get_index( results.size(), percentile ) ]
+                                    << round_with_precision(
+                                            results[ m_get_index( results.size(), percentile ) ],
+                                            precision
+                                    )
                                     << '\n';
                             }
                         );

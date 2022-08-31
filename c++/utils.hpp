@@ -11,6 +11,12 @@ static inline std::string add_label( std::string const & expression, std::string
     return expression + '{' + name + "=\"" + std::to_string( value ) + "\"}";
 }
 
+static inline double round_with_precision( double value, size_t precision )
+{
+    double mult = ( double ) std::pow( 10, precision );
+    return std::round( value * mult ) / mult;
+}
+
 static inline uint64_t now()
 {
     return std::chrono::duration_cast< std::chrono::milliseconds >(
