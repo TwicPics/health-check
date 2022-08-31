@@ -71,13 +71,13 @@ Indexes are determined by the [Nvidia Management Library](https://developer.nvid
 
 A handler is a function. If provided, it is called:
 - when the corresponding route is requested (`health` and `ready`)
-- every 2 seconds when metrics are computed (`metrics`)
+- every _period_ seconds when metrics are computed internally (`metrics`)
 
 Handlers can be asynchronous.
 
-If an exception is thrown in a handler, the health check server will issue a `503` with the exception message as a body:
-- always for the `health` and `ready` handlers
-- if an exception was raised in `metrics` more than `errorRatio` times the number of ticks since `/metrics` was previously requested
+If an exception is thrown in a `health` or `ready` handler, the health check server will issue a `503` with the exception message.
+
+If an exception is raised in the `metrics` handler, it is silenced.
 
 ### `health: () => void`
 
@@ -99,7 +99,7 @@ healthCheck( {
 
 This handler should return an `object` containing custom metrics that will be added to the built-in ones.
 
-Attribute names will be converted from camel-case to snake-case if needed.
+Property names will be converted from camel-case to snake-case if needed.
 
 Example:
 
@@ -135,7 +135,6 @@ Alternatively and if warranted, you can throw an exception with a sensible error
 
 | name | type | default | description |
 |-|-|-|-|
-| `errorRatio` | `number` | `0` | ratio between `0` and `1` of ticks where the `metrics` handler threw an exception needed for the `/metrics` route to issue a `503` with the message of the latest exception as its body |
 | `keepAlive` | `number` | `60` | keep alive timeout for the port of the health check server in seconds |
 | `gpu` | `boolean` | `true` | set to `false` so as not to compute nor output GPU metrics |
 | `health` | `function` | `undefined` | health handler |
@@ -147,7 +146,7 @@ Alternatively and if warranted, you can throw an exception with a sensible error
 | `prefix` | `string` | `undefined` | metrics prefix, for instance if `prefix` is `myapp`, the metrics `cpu_memory` will become `myapp_cpu_memory` |
 | `ready` | `function` | `undefined` | ready handler |
 | `ticks` | `Number` | `30` | number of ticks (periods of `2` seconds by default) used to assess metrics |
-| `timeout` | `number` | `1` | time in seconds main thread handlers have to answer (set to `0` for no timeout) |
+| `timeout` | `number` | `1` | time in seconds handlers have to answer (set to `0` for no timeout) |
 | `version` | `string` | `undefined` | what's returned by the `/version` route of the health check server, if falsy (`undefined`, `null`, etc), the `/version` route will issue a `404` |
 
 [license-image]: https://img.shields.io/npm/l/@twicpics/health-check.svg?style=flat-square

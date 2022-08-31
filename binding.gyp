@@ -1,12 +1,12 @@
 {
   'targets': [
     {
-      'target_name': 'gpu',
+      'target_name': 'native',
       'dependencies': [
         "<!(node -p \"require('node-addon-api').gyp\")",
       ],
       'sources': [
-        'gpu.cc',
+        'c++/_.cc',
       ],
       # Use pre-built libs
       'include_dirs': [
