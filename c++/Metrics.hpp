@@ -83,7 +83,7 @@ class Metrics
                                     << prefix
                                     << (
                                         ( percentiles.size() > 1 ) ?
-                                            add_label( pair.first, "p", ( size_t ) percentile ) :
+                                            add_label( pair.first, "p", percentile ) :
                                             pair.first
                                     )
                                     << ' '

@@ -2,14 +2,13 @@
 
 #include <string>
 
-template< typename Type >
-static inline std::string add_label( std::string const & expression, std::string const & name, Type value )
+static inline std::string add_label( std::string const & expression, std::string const & name, int64_t value )
 {
     if ( expression.size() && ( expression.back() == '}' ) )
     {
-        return expression.substr( 0, expression.size() - 1 ) + ',' + name + '=' + std::to_string( value ) + '}';
+        return expression.substr( 0, expression.size() - 1 ) + ',' + name + "=\"" + std::to_string( value ) + "\"}";
     }
-    return expression + '{' + name + '=' + std::to_string( value ) + '}';
+    return expression + '{' + name + "=\"" + std::to_string( value ) + "\"}";
 }
 
 static inline uint64_t now()
