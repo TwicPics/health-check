@@ -144,9 +144,10 @@ If an exception is thrown then `/ready` will issue a `503` with the exception me
 
 | name | type | default | description |
 |-|-|-|-|
-| `keepAlive` | `number` | `60` | keep alive timeout for the port of the health check server in seconds |
+| `cpu` | `boolean` | `true` | set to `false` so as not to compute nor output CPU metrics |
 | `gpu` | `boolean` | `true` | set to `false` so as not to compute nor output GPU metrics |
 | `health` | `function` | `undefined` | health handler |
+| `keepAlive` | `number` | `60` | keep alive timeout for the port of the health check server in seconds |
 | `metrics` | `function` | `undefined` | metrics handler |
 | `percentile` | `number` or `array<number>` or `string` | `75` | percentile between `1` and `100` of metrics (lowest to highest value), when an array of more than one percentile is provided, metrics will be duplicated with a `p="<percentile>"` label, when a string is provided it must be a space-separated list of values akin to `"25 50 75"` |
 | `period` | `number` | `2` | period of a tick in seconds (minimum `0.5`), metrics handler has half that time to respond unless `timeout` is lower and not `0` |

@@ -10,6 +10,8 @@
 class Module: public Napi::ObjectWrap< Module >
 {
     private:
+        bool m_compute_cpu;
+        bool m_compute_gpu;
         CPU m_cpu;
         Custom m_custom;
         GPU m_gpu;
@@ -42,19 +44,26 @@ class Module: public Napi::ObjectWrap< Module >
                 // wait for next period
                 sleeper.sleep();
 
-                // custom
+                // custom initiator
                 auto future = m_custom.get_metrics();
 
                 // cpu and gpu
+                if ( m_compute_cpu || m_compute_gpu )
                 {
                     std::unique_lock< std::mutex > lock( m_mutex );
-                    m_cpu.get_metrics( handle_metric );
-                    m_gpu.get_metrics( handle_metric );
+                    if ( m_compute_cpu )
+                    {
+                        m_cpu.get_metrics( handle_metric );
+                    }
+                    if ( m_compute_gpu )
+                    {
+                        m_gpu.get_metrics( handle_metric );
+                    }
                 }
 
-                // wait for custom metrics
-                auto custom = future.get();
+                // custom metrics
                 {
+                    auto custom = future.get();
                     std::unique_lock< std::mutex > lock( m_mutex );
                     for ( auto it = custom.begin(); it != custom.end(); ++it )
                     {
@@ -80,6 +89,8 @@ class Module: public Napi::ObjectWrap< Module >
         }
         inline Module( Napi::CallbackInfo const & info, Napi::Object const & options ):
             Napi::ObjectWrap< Module >( info ),
+            m_compute_cpu( options.Get( "cpu" ).ToBoolean() ),
+            m_compute_gpu( options.Get( "gpu" ).ToBoolean() ),
             m_cpu(),
             m_custom( options.Get( "metrics" ).As< Napi::Function >() ),
             m_gpu(),
