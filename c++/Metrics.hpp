@@ -52,7 +52,8 @@ class Metrics
 
         inline Metrics & add( std::string const & name, double value )
         {
-            auto pair = m_map.try_emplace( name, m_ticks );
+            bool is_counter = name[ 0 ] == '#';
+            auto pair = m_map.try_emplace( is_counter ? name.substr( 1 ) : name, is_counter ? 1 : m_ticks );
             pair.first->second.add( value );
             return ( *this );
         }

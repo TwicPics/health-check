@@ -1,10 +1,16 @@
 "use strict";
 
+let counter = 0;
+
+// eslint-disable-next-line no-magic-numbers
+setInterval( () => ( ++counter ), 1666 );
+
 // eslint-disable-next-line no-unused-vars
 const asyncRandomStuff = async () => {
     // eslint-disable-next-line no-magic-numbers
     await new Promise( resolve => setTimeout( resolve, 1000 ) );
     return {
+        "#counter": counter,
         "randomStuff": Math.random(),
     };
 };
@@ -18,6 +24,7 @@ const asyncThrowsStuff = async () => {
 
 // eslint-disable-next-line no-unused-vars
 const randomStuff = () => ( {
+    "#counter": counter,
     "randomStuff": Math.random(),
 } );
 

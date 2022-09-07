@@ -97,12 +97,15 @@ This handler should return an `object` containing custom metrics.
 
 Property names will be converted from camel-case to snake-case when needed.
 
+If a property name starts with the hash symbol (`#`) then it is considered as a _cumulative counter_: only its latest, more current value will be used, no percentile shenanigans will be attempted.
+
 Example:
 
 ```js
 healthCheck.createServer( {
     "metrics": () => ( {
-        "myMetric": 78,
+        "#myCount": 16,
+        "myMetric": Math.random(),
     } ),
 } );
 ```
@@ -114,7 +117,8 @@ cpu_memory 0.217
 cpu_usage 0.338
 gpu_memory 0.02
 gpu_usage 0
-my_metric 78
+my_count 16
+my_metric 0.502
 ```
 
 Custom metrics must be pure numbers: strings convertible to numbers will be ignored.
