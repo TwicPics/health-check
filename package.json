@@ -5,7 +5,8 @@
     "description": "configurable health check server with built-in prometheus metrics for cpu and gpu usage",
     "devDependencies": {
         "eslint": "8.23.0",
-        "eslint-config-creative-area": "0.11.1"
+        "eslint-config-creative-area": "0.11.1",
+	"cmake-js": "^7.3.0"
     },
     "engines": {
         "node": ">=16"
@@ -25,6 +26,9 @@
     "repository": {
         "type": "git",
         "url": "http://github.com/twicpics/health-check.git"
+    },
+    "scripts": {
+        "install": "cmake-js compile"
     },
     "version": "0.5.0"
 }
