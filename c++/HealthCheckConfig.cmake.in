@@ -1,0 +1,7 @@
+include(CMakeFindDependencyMacro)
+
+# Capturing values from configure 
+set(HEALTH_CHECK_SUPPORTS_GPU @HEALTH_CHECK_SUPPORTS_GPU@)
+
+# Add the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/HealthCheckTargets.cmake")

@@ -1,11 +1,12 @@
 #pragma once
 
-#if __has_include( <nvml.h> )
+#include <HealthCheckConfig.h>
+
+#if HEALTH_CHECK_SUPPORTS_GPU
 extern "C"
 {
     #include <nvml.h>
 }
-#define __HAS_NVML
 #endif
 
 #include <functional>
@@ -14,7 +15,7 @@ extern "C"
 class GPU
 {
     private:
-        #ifdef __HAS_NVML
+        #if HEALTH_CHECK_SUPPORTS_GPU 
         static int INIT __attribute((unused));
         #endif
     public:
@@ -24,7 +25,7 @@ class GPU
             std::function< void( std::string const &, std::string const &, double, size_t ) > const & handler
         ) const
         {
-            #ifdef __HAS_NVML
+            #if HEALTH_CHECK_SUPPORTS_GPU 
             double sum_usage = 0.;
             double sum_memory_total = 0.;
             double sum_memory_used = 0.;
@@ -67,6 +68,6 @@ class GPU
         }
 };
 
-#ifdef __HAS_NVML
+#if HEALTH_CHECK_SUPPORTS_GPU
 int GPU::INIT = nvmlInit_v2();
 #endif

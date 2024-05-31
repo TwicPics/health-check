@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine01 HEALTH_CHECK_SUPPORTS_GPU

@@ -28,7 +28,10 @@
         "url": "http://github.com/twicpics/health-check.git"
     },
     "scripts": {
-        "install": "cmake-js compile"
+        "install": "cmake-js compile",
+        "configure-cpu-only": "cmake-js configure --CDHEALTH_CHECK_DISABLE_GPU=ON",
+        "clear": "rm -rf build",
+        "install-native": "cmake-js compile && cmake --install ./build"
     },
-    "version": "0.5.0"
+    "version": "0.6.0"
 }
