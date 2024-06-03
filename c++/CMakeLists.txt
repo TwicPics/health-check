@@ -151,7 +151,7 @@ install(EXPORT HealthCheckTargets
         FILE HealthCheckTargets.cmake
         NAMESPACE HealthCheck::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/HealthCheck
-         )
+        )
 configure_file(HealthCheckConfig.cmake.in HealthCheckConfig.cmake @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/HealthCheckConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/HealthCheckConfigVersion.cmake"
